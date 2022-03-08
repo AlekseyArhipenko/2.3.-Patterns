@@ -3,6 +3,8 @@ package ru.netology;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.github.javafaker.Faker;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
@@ -11,7 +13,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
@@ -19,6 +20,10 @@ import static com.codeborne.selenide.Selenide.open;
 
 public class CardWithDelivery {
 
+    @BeforeAll
+    public static void setUpAll() {
+        WebDriverManager.chromedriver().setup();
+    }
 
     @BeforeEach
     void setUp() {
