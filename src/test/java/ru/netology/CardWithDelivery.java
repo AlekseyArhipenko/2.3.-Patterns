@@ -24,7 +24,7 @@ public class CardWithDelivery {
     @BeforeAll
     static void setUp() {
         Faker faker = new Faker(new Locale("ru"));
-        System.setProperty("web-driver.chrome.driver", "./drivers/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver.exe");
     }
 
 
