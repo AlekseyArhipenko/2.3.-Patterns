@@ -3,7 +3,6 @@ package ru.netology;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.github.javafaker.Faker;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +23,6 @@ public class CardWithDelivery {
     @BeforeAll
     static void setUp() {
         Faker faker = new Faker(new Locale("ru"));
-        System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver.exe");
     }
 
 
