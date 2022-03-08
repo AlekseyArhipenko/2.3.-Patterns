@@ -5,61 +5,56 @@ import com.codeborne.selenide.Configuration;
 import com.github.javafaker.Faker;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Keys;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 
 
 public class CardWithDelivery {
 
+
     @BeforeAll
-    public static void setUpAll() {
-        WebDriverManager.chromedriver().setup();
-    }
-
-    @BeforeEach
-    void setUp() {
-        open("http://localhost:9999/");
-        Configuration.holdBrowserOpen = true;
-        $("[data-test-id='date'] input").doubleClick().sendKeys(Keys.DELETE);
-    }
-
-        @Test
-        void shouldCardApplication () {
-            Faker faker = new Faker(new Locale("ru"));
-            String myDate = LocalDate.now().plusDays(4).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-            $("[data-test-id='city'] input").val(faker.address().cityName());
-            $("[data-test-id='date'] input").sendKeys(myDate);
-            $("[data-test-id='name'] input").val(faker.name().fullName());
-            $("[data-test-id='phone'] input").val(faker.number().digits(11));
-            $("[data-test-id='agreement']").click();
-            $(".button").click();
-            $("[data-test-id='success-notification']").shouldHave(Condition.text("Встреча успешно запланирована на " + myDate));
-
-        }
-    @Test
-    public void shouldRescheduleDate() {
+    static void setUp() {
         Faker faker = new Faker(new Locale("ru"));
-        String myDate = LocalDate.now().plusDays(4).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-        $("[data-test-id='city'] input").val(faker.address().cityName());
-        $("[data-test-id='date'] input").sendKeys(myDate);
-        $("[data-test-id='name'] input").val(faker.name().fullName());
-        $("[data-test-id='phone'] input").val(faker.number().digits(11));
-        $("[data-test-id='agreement']").click();
-        $(".button").click();
-        $("[data-test-id='success-notification']").shouldHave(Condition.text("Встреча успешно запланирована на " + myDate));
-        $(".button").click();
-        $("[data-test-id='replan-notification']").shouldHave(Condition.text("У вас уже запланирована встреча на другую дату. Перепланировать?"));
-        $(byText("Перепланировать")).click();
-        $("[data-test-id='success-notification']").shouldHave(Condition.text("Встреча успешно запланирована на " + myDate));
+            WebDriverManager.chromedriver().setup();
     }
+
+
+    String generateDate(int days) {
+        return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
+
+    @Test
+    void shouldCardApplication() {
+        Configuration.holdBrowserOpen = true;
+        Configuration.browserSize = "1600x900";
+        String planningDate = generateDate(4);
+        open("http://localhost:9999");
+        $("[data-test-id='city'] input").val(GeneratorOfData.getCity());
+        $("[data-test-id='date'] input").doubleClick().sendKeys(planningDate);
+        $("[data-test-id='name'] input").val(GeneratorOfData.getName());
+        $("[data-test-id='phone'] input").val(GeneratorOfData.getPhone());
+        $("[data-test-id='agreement']>span").click();
+        $("[role='button'] span [class='button__text']").click();
+        $("[class='notification__content']").shouldHave(Condition.text("Встреча успешно запланирована на " + planningDate), Duration.ofSeconds(15));
+
+
+        $("[data-test-id='date'] input").setValue(GeneratorOfData.getDataRandom());
+        $(withText("Запланировать")).click();
+        $(withText("У вас уже запланирована встреча на другую дату. Перепланировать?")).shouldBe(visible);
+        $("[data-test-id=replan-notification] button.button").click();
+        $(withText("Успешно")).shouldBe(visible);
+
+
+    }
+
 
 }
