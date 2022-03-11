@@ -20,12 +20,6 @@ import static com.codeborne.selenide.Selenide.open;
 public class CardWithDelivery {
 
 
-    @BeforeAll
-    static void setUp() {
-        Faker faker = new Faker(new Locale("ru"));
-    }
-
-
     String generateDate(int days) {
         return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
@@ -49,7 +43,7 @@ public class CardWithDelivery {
         $(withText("Запланировать")).click();
         $(withText("У вас уже запланирована встреча на другую дату. Перепланировать?")).shouldBe(visible);
         $("[data-test-id=replan-notification] button.button").click();
-        $(withText("Успешно")).shouldBe(visible);
+        $("[class='notification__content']").shouldHave(Condition.text("Встреча успешно запланирована на " + planningDate));
 
 
     }
