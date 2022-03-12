@@ -12,10 +12,11 @@ public class GeneratorOfData {
     public static Faker faker = new Faker(new Locale("ru"));
 
     public static String getCity() {
-        return faker.address().cityName();
+        String[] city = {"Майкоп", "Горно-Алтайск", "Уфа", "Улан-Удэ", "Махачкала"};
+        return city[new Random().nextInt(2)];
     }
 
-    String generateDate(int days) {
+    public static String generateDate(int days) {
         return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
